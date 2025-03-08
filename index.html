@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Crosswords by Bibek</title>
+    <!-- Include the CryptoJS library for hashing the user id -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- Include the javascript library for embedding this puzzle -->
+    <script id="pm-script" src="https://puzzleme.amuselabs.com/pmm/js/puzzleme-embed.js"></script>
+    <!-- Font awesome for icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Specify the Amuse Labs server name -->
+    <script>
+        PM_Config.PM_BasePath = "https://puzzleme.amuselabs.com/pmm/";
+    </script>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --secondary: #3498DB;
+            --accent: #E74C3C;
+            --light: #ECF0F1;
+            --dark: #2C3E50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f9fc;
+            color: var(--dark);
+            line-height: 1.6;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233498db' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px 0;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-rule='evenodd'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 20.83l2.83-2.83 1.41 1.41L1.41 22.24H0v-1.41zM22.24 0l2.83 2.83-1.41 1.41L20.83 1.41V0h1.41zM40 18.59l-2.83 2.83-1.41-1.41 2.83-2.83V18.59z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 32px;
+            margin-right: 15px;
+            color: var(--light);
+        }
+        
+        .title-area h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .title-area p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+        
+        .date-display {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .date-display i {
+            margin-right: 8px;
+        }
+        
+        .main-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .intro {
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(236, 240, 241, 0.5);
+        }
+        
+        .intro h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .intro p {
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .crossword-container {
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .pm-embed-div {
+            margin: 0 auto;
+        }
+        
+        .medical-icons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            color: var(--secondary);
+            opacity: 0.7;
+        }
+        
+        .medical-icon {
+            font-size: 2rem;
+        }
+        
+        .pm-attribution-div {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-size: 14px !important;
+            color: #555 !important;
+            padding: 15px 0 !important;
+        }
+        
+        .pm-attribution-div a {
+            color: var(--secondary) !important;
+            text-decoration: none !important;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .pm-attribution-div a:hover {
+            color: var(--accent) !important;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .footer-icons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .footer-icon {
+            color: var(--primary);
+            font-size: 1.5rem;
+            transition: color 0.3s, transform 0.3s;
+        }
+        
+        .footer-icon:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .logo-area {
+                margin-bottom: 15px;
+            }
+            
+            .title-area h1 {
+                font-size: 2rem;
+            }
+            
+            .medical-icons {
+                gap: 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-pattern"></div>
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo">
+                        <i class="fas fa-notes-medical"></i>
+                    </div>
+                </div>
+                <div class="title-area">
+                    <h1>Medical Crosswords</h1>
+                    <p>Crafted by Bibek</p>
+                    <div class="date-display">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="current-date">Sat, Mar 8, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="intro">
+                <h2>Challenge Your Medical Knowledge</h2>
+                <p>Test your understanding of medical terminology, anatomy, pathology, and more with these professionally created crossword puzzles designed for healthcare professionals, students, and enthusiasts.</p>
+                <p style="margin-top: 10px; font-weight: 600; color: var(--secondary);">A new puzzle is available every day!</p>
+            </div>
+            
+            <div class="medical-icons">
+                <div class="medical-icon"><i class="fas fa-heartbeat"></i></div>
+                <div class="medical-icon"><i class="fas fa-brain"></i></div>
+                <div class="medical-icon"><i class="fas fa-pills"></i></div>
+                <div class="medical-icon"><i class="fas fa-stethoscope"></i></div>
+                <div class="medical-icon"><i class="fas fa-syringe"></i></div>
+            </div>
+            
+            <div class="crossword-container">
+                <!-- Specifies the puzzle to be embedded on the page -->
+                <div class="pm-embed-div" 
+                     data-id="5d5d3615" 
+                     data-set="a49465bb86af1acaec4ccb69b75441effc493eafde45b2054c0df8d6b3835130" 
+                     data-puzzleType="crossword" 
+                     data-height="700px" 
+                     data-mobileMargin="10px">
+                </div>
+                <div class="pm-attribution-div">
+                    Developed by Bibek | <a href="https://amuselabs.com/games/crossword/" target="_blank">Crossword Platform</a>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 Medical Crosswords by Bibek. All rights reserved.</p>
+            <div class="footer-icons">
+                <a href="#" class="footer-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="footer-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="footer-icon"><i class="fas fa-envelope"></i></a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Function to update the date display
+        function updateDate() {
+            const now = new Date();
+            
+            // Format options for the date display
+            const options = { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            };
+            
+            // Format the date string
+            const formattedDate = now.toLocaleDateString('en-US', options);
+            
+            // Update the date element
+            document.getElementById('current-date').textContent = formattedDate;
+        }
+        
+        // Update the date when the page loads
+        updateDate();
+        
+        // If the page stays open past midnight, update the date
+        // This checks every minute to see if the date has changed
+        setInterval(() => {
+            const currentDate = document.getElementById('current-date').textContent;
+            updateDate();
+            const newDate = document.getElementById('current-date').textContent;
+            
+            // If date has changed, reload the page to get the new puzzle
+            if (currentDate !== newDate) {
+                window.location.reload();
+            }
+        }, 60000); // Check every minute
+    </script>
+</body>
+</html>
